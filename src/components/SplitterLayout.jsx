@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Pane from './Pane';
+import { calculateSecondaryPaneSize } from './paneSizeCalculator';
 
 function clearSelection() {
   if (document.body.createTextRange) {
@@ -87,48 +88,19 @@ class SplitterLayout extends React.Component {
   }
 
   getSecondaryPaneSize(containerRect, splitterRect, clientPosition, offsetMouse) {
-    let totalSize;
-    let splitterSize;
-    let offset;
-    if (this.props.vertical) {
-      totalSize = containerRect.height;
-      splitterSize = splitterRect.height;
-      offset = clientPosition.top - containerRect.top;
-    } else {
-      totalSize = containerRect.width;
-      splitterSize = splitterRect.width;
-      offset = clientPosition.left - containerRect.left;
-    }
-    if (offsetMouse) {
-      offset -= splitterSize / 2;
-    }
-    if (offset < 0) {
-      offset = 0;
-    } else if (offset > totalSize - splitterSize) {
-      offset = totalSize - splitterSize;
-    }
-
-    let secondaryPaneSize;
-    if (this.props.primaryIndex === 1) {
-      secondaryPaneSize = offset;
-    } else {
-      secondaryPaneSize = totalSize - splitterSize - offset;
-    }
-    let primaryPaneSize = totalSize - splitterSize - secondaryPaneSize;
-    if (this.props.percentage) {
-      secondaryPaneSize = (secondaryPaneSize * 100) / totalSize;
-      primaryPaneSize = (primaryPaneSize * 100) / totalSize;
-      splitterSize = (splitterSize * 100) / totalSize;
-      totalSize = 100;
-    }
-
-    if (primaryPaneSize < this.props.primaryMinSize) {
-      secondaryPaneSize = Math.max(secondaryPaneSize - (this.props.primaryMinSize - primaryPaneSize), 0);
-    } else if (secondaryPaneSize < this.props.secondaryMinSize) {
-      secondaryPaneSize = Math.min(totalSize - splitterSize - this.props.primaryMinSize, this.props.secondaryMinSize);
-    }
-
-    return secondaryPaneSize;
+    return calculateSecondaryPaneSize(
+      {
+        vertical: this.props.vertical,
+        percentage: this.props.percentage,
+        primaryIndex: this.props.primaryIndex,
+        primaryMinSize: this.props.primaryMinSize,
+        secondaryMinSize: this.props.secondaryMinSize
+      },
+      containerRect,
+      splitterRect,
+      clientPosition,
+      offsetMouse
+    );
   }
 
   handleResize() {

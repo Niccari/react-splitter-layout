@@ -4,22 +4,22 @@ const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 global.window = jsdom.window;
 global.document = window.document;
 
-document.simulateMouseUp = () => {
-  document.dispatchEvent(new MouseEvent('mouseup'));
-};
+// Mock getBoundingClientRect for testing
+Element.prototype.getBoundingClientRect = jest.fn(function getBoundingClientRectMock() {
+  return {
+    width: parseFloat(this.style.width) || 0,
+    height: parseFloat(this.style.height) || 0,
+    top: parseFloat(this.style.top) || 0,
+    left: parseFloat(this.style.left) || 0,
+    bottom: 0,
+    right: 0,
+    x: 0,
+    y: 0,
+    toJSON() {}
+  };
+});
 
-document.simulateMouseMove = (clientX, clientY) => {
-  document.dispatchEvent(new MouseEvent('mousemove', { clientX, clientY }));
-};
-
-document.simulateTouchEnd = () => {
-  document.dispatchEvent(new TouchEvent('touchend'));
-};
-
-document.simulateTouchMove = (clientX, clientY) => {
-  document.dispatchEvent(new TouchEvent('touchmove', { changedTouches: [{ clientX, clientY }] }));
-};
-
+// Keep window.resizeTo (not a standard API)
 window.resizeTo = (width, height) => {
   window.innerWidth = width;
   window.innerHeight = height;

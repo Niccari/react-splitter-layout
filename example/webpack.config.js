@@ -1,7 +1,5 @@
-const webpack = require('webpack');
-
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: [
     './javascripts/index.jsx'
   ],
@@ -36,5 +34,16 @@ module.exports = {
   output: {
     path: __dirname,
     filename: 'bundle.js'
+  },
+  devServer: {
+    static: {
+      directory: __dirname
+    },
+    port: 8080,
+    open: false
+  },
+  performance: {
+    maxAssetSize: 512000,
+    maxEntrypointSize: 512000
   }
 };
