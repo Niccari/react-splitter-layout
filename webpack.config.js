@@ -20,16 +20,20 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyWebpackPlugin([
+    new CopyWebpackPlugin(
       {
-        from: 'src/stylesheets/*',
-        flatten: true
+        patterns: [
+          {
+            from: 'src/stylesheets/index.css',
+            to: 'index.css'
+          },
+          {
+            from: 'index.d.ts',
+            to: 'index.d.ts'
+          }
+        ]
       },
-      {
-        from: 'index.d.ts',
-        to: 'index.d.ts'
-      }
-    ])
+    )
   ],
   output: {
     path: resolve(__dirname, 'lib'),

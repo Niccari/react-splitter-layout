@@ -2,7 +2,7 @@ import React from 'react';
 import SplitterLayout from '../../../index';
 import Lorem from './Lorem';
 
-export default function() {
+export default function NestedLayout() {
   return (
     <SplitterLayout primaryIndex={1} secondaryInitialSize={250}>
       <div className="my-pane">

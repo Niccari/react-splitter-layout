@@ -2,7 +2,7 @@ import React from 'react';
 import SplitterLayout from '../../../index';
 import Lorem from './Lorem';
 
-export default function() {
+export default function LayoutWithMinimalSize() {
   return (
     <SplitterLayout primaryMinSize={400} secondaryMinSize={200}>
       <div className="my-pane">

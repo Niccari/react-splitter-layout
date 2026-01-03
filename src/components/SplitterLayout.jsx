@@ -87,6 +87,7 @@ class SplitterLayout extends React.Component {
     document.removeEventListener('touchmove', this.handleTouchMove);
   }
 
+  // eslint-disable-next-line react/sort-comp
   getSecondaryPaneSize(containerRect, splitterRect, clientPosition, offsetMouse) {
     return calculateSecondaryPaneSize(
       {
@@ -138,7 +139,7 @@ class SplitterLayout extends React.Component {
   }
 
   handleMouseUp() {
-    this.setState(prevState => (prevState.resizing ? { resizing: false } : null));
+    this.setState((prevState) => (prevState.resizing ? { resizing: false } : null));
   }
 
   render() {
@@ -185,8 +186,7 @@ class SplitterLayout extends React.Component {
               onMouseDown={this.handleSplitterMouseDown}
               onTouchStart={this.handleSplitterMouseDown}
             />
-          )
-        }
+          )}
         {wrappedChildren.length > 1 && wrappedChildren[1]}
       </div>
     );

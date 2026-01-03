@@ -12,7 +12,7 @@ export default class TogglableSidebarLayout extends React.Component {
   }
 
   toggleSidebar() {
-    this.setState(state => ({ sidebarVisible: !state.sidebarVisible }));
+    this.setState((state) => ({ sidebarVisible: !state.sidebarVisible }));
   }
 
   render() {
@@ -46,8 +46,7 @@ export default class TogglableSidebarLayout extends React.Component {
               </pre>
               <Lorem title="2nd Pane" />
             </div>
-          )
-        }
+          )}
       </SplitterLayout>
     );
   }
