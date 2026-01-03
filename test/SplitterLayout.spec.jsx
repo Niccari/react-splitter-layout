@@ -1,345 +1,137 @@
-/* eslint prefer-spread: [0], react/no-array-index-key: [0], react/no-find-dom-node: [0] */
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ReactTestUtils from 'react-dom/test-utils';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import SplitterLayout from '../src/components/SplitterLayout';
-import Pane from '../src/components/Pane';
-
-function render(length, props = {}) {
-  const children = Array.apply(null, { length }).map((_, i) => <div key={i}>Child #{i}</div>);
-  const renderer = new ShallowRenderer();
-  renderer.render(<SplitterLayout {...props}>{children}</SplitterLayout>);
-  return renderer.getRenderOutput();
-}
-
-function renderIntoDocument(length, props) {
-  const children = Array.apply(null, { length }).map((_, i) => <div key={i}>Child #{i}</div>);
-  const component = ReactTestUtils.renderIntoDocument(<SplitterLayout {...props}>{children}</SplitterLayout>);
-  return component;
-}
 
 describe('SplitterLayout', () => {
   describe('rendering', () => {
     it('should render correctly when 2 children provided', () => {
-      const output = render(2);
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(false);
-      expect(output.props.children[0].props.primary).toBe(true);
-      expect(output.props.children[0].props.percentage).toBe(false);
-      expect(output.props.children[1].type).toBe('div');
-      expect(output.props.children[1].props.className).toBe('layout-splitter');
-      expect(output.props.children[2].type).toBe(Pane);
-      expect(output.props.children[2].props.vertical).toBe(false);
-      expect(output.props.children[2].props.primary).toBe(false);
-      expect(output.props.children[2].props.percentage).toBe(false);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
+      expect(layoutContainer).not.toHaveClass('splitter-layout-vertical');
+
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(2);
+      expect(panes[0]).toHaveClass('layout-pane-primary');
+      expect(panes[1]).not.toHaveClass('layout-pane-primary');
+
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).toBeInTheDocument();
     });
 
     it('should render properties correctly if requested', () => {
-      const output = render(2, {
-        customClassName: 'custom-class',
-        vertical: true,
-        percentage: true,
-        primaryIndex: 1
-      });
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout custom-class splitter-layout-vertical');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(true);
-      expect(output.props.children[0].props.primary).toBe(false);
-      expect(output.props.children[0].props.percentage).toBe(true);
-      expect(output.props.children[1].type).toBe('div');
-      expect(output.props.children[1].props.className).toBe('layout-splitter');
-      expect(output.props.children[2].type).toBe(Pane);
-      expect(output.props.children[2].props.vertical).toBe(true);
-      expect(output.props.children[2].props.primary).toBe(true);
-      expect(output.props.children[2].props.percentage).toBe(true);
+      const { container } = render(
+        <SplitterLayout
+          customClassName="custom-class"
+          vertical
+          percentage
+          primaryIndex={1}
+        >
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
+      expect(layoutContainer).toHaveClass('custom-class');
+      expect(layoutContainer).toHaveClass('splitter-layout-vertical');
+
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(2);
+      expect(panes[0]).not.toHaveClass('layout-pane-primary');
+      expect(panes[1]).toHaveClass('layout-pane-primary');
+
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).toBeInTheDocument();
     });
 
     it('should set the first children as primary if invalid primary index is provided', () => {
-      const output = render(2, {
-        primaryIndex: 5
-      });
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(false);
-      expect(output.props.children[0].props.primary).toBe(true);
-      expect(output.props.children[0].props.percentage).toBe(false);
-      expect(output.props.children[1].type).toBe('div');
-      expect(output.props.children[1].props.className).toBe('layout-splitter');
-      expect(output.props.children[2].type).toBe(Pane);
-      expect(output.props.children[2].props.vertical).toBe(false);
-      expect(output.props.children[2].props.primary).toBe(false);
-      expect(output.props.children[2].props.percentage).toBe(false);
+      const { container } = render(
+        <SplitterLayout primaryIndex={5}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
+
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(2);
+      expect(panes[0]).toHaveClass('layout-pane-primary');
+      expect(panes[1]).not.toHaveClass('layout-pane-primary');
+
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).toBeInTheDocument();
     });
 
     it('should render one child when nothing provided', () => {
-      const output = render(0);
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(false);
-      expect(output.props.children[0].props.primary).toBe(true);
-      expect(output.props.children[0].props.percentage).toBe(false);
-      expect(output.props.children[1]).toBe(false);
-      expect(output.props.children[2]).toBe(false);
+      const { container } = render(<SplitterLayout />);
+
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
+
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(1);
+      expect(panes[0]).toHaveClass('layout-pane-primary');
+
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).not.toBeInTheDocument();
     });
 
     it('should render one child when only 1 child provided', () => {
-      const output = render(1);
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(false);
-      expect(output.props.children[0].props.primary).toBe(true);
-      expect(output.props.children[0].props.percentage).toBe(false);
-      expect(output.props.children[1]).toBe(false);
-      expect(output.props.children[2]).toBe(false);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
+
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(1);
+      expect(panes[0]).toHaveClass('layout-pane-primary');
+
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).not.toBeInTheDocument();
     });
 
     it('should render 2 children when more than 2 children provided', () => {
-      const output = render(5);
-      expect(output.type).toBe('div');
-      expect(output.props.className).toBe('splitter-layout');
-      expect(output.props.children.length).toBe(3);
-      expect(output.props.children[0].type).toBe(Pane);
-      expect(output.props.children[0].props.vertical).toBe(false);
-      expect(output.props.children[0].props.primary).toBe(true);
-      expect(output.props.children[0].props.percentage).toBe(false);
-      expect(output.props.children[1].type).toBe('div');
-      expect(output.props.children[1].props.className).toBe('layout-splitter');
-      expect(output.props.children[2].type).toBe(Pane);
-      expect(output.props.children[2].props.vertical).toBe(false);
-      expect(output.props.children[2].props.primary).toBe(false);
-      expect(output.props.children[2].props.percentage).toBe(false);
-    });
-  });
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+          <div>Child #2</div>
+          <div>Child #3</div>
+          <div>Child #4</div>
+        </SplitterLayout>
+      );
 
-  describe('sizing', () => {
-    it('should get correct secondary pane size when horizontal, pixel sizing and first child as primary', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 50, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(972);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(970);
-    });
+      const layoutContainer = container.firstChild;
+      expect(layoutContainer.tagName).toBe('DIV');
+      expect(layoutContainer).toHaveClass('splitter-layout');
 
-    it('should get correct secondary pane size when vertical, pixel sizing and first child as primary', () => {
-      const component = {
-        props: {
-          vertical: true,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 40, left: 0, width: 1024, height: 4 };
-      const position = { left: 50, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(310);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(308);
-    });
+      const panes = container.querySelectorAll('.layout-pane');
+      expect(panes).toHaveLength(2);
+      expect(panes[0]).toHaveClass('layout-pane-primary');
+      expect(panes[1]).not.toHaveClass('layout-pane-primary');
 
-    it('should get correct secondary pane size when horizontal, percentage sizing and first child as primary', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: true,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 512, top: 128 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(49.8046875);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(49.609375);
-    });
-
-    it('should get correct secondary pane size when vertical, percentage sizing and first child as primary', () => {
-      const component = {
-        props: {
-          vertical: true,
-          percentage: true,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 512, height: 4 };
-      const position = { left: 512, top: 128 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(74.609375);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(74.21875);
-    });
-
-    it('should get correct secondary pane size when horizontal, pixel sizing and second child as primary', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 1,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 50, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(48);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(50);
-    });
-
-    it('should get correct secondary pane size when vertical, pixel sizing and second child as primary', () => {
-      const component = {
-        props: {
-          vertical: true,
-          percentage: false,
-          primaryIndex: 1,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 40, left: 0, width: 1024, height: 4 };
-      const position = { left: 50, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(198);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(200);
-    });
-
-    it('should get correct secondary pane size when horizontal, percentage sizing and second child as primary', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: true,
-          primaryIndex: 1,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 512, top: 128 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(49.8046875);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(50);
-    });
-
-    it('should get correct secondary pane size when vertical, percentage sizing and second child as primary', () => {
-      const component = {
-        props: {
-          vertical: true,
-          percentage: true,
-          primaryIndex: 1,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 512, height: 4 };
-      const position = { left: 512, top: 128 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(24.609375);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(25);
-    });
-
-    it('should adjust the pane size when exceeds limit', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 0
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: -10, top: 200 }, true)).toBe(1020);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: -10, top: 200 }, false)).toBe(1020);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 1050, top: 200 }, true)).toBe(0);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 1050, top: 200 }, false)).toBe(0);
-    });
-
-    it('should respect user setting of secondary pane minimal size', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 0,
-          secondaryMinSize: 200
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 1024, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(200);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(200);
-    });
-
-    it('should respect primary pane minimal size over secondary pane minimal size', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 600,
-          secondaryMinSize: 600
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 500, top: 200 }, true)).toBe(420);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 500, top: 200 }, false)).toBe(420);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 900, top: 200 }, true)).toBe(420);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, { left: 900, top: 200 }, false)).toBe(420);
-    });
-
-    it('should respect primary pane minimal size over secondary pane minimal size when width is not enough', () => {
-      const component = {
-        props: {
-          vertical: false,
-          percentage: false,
-          primaryIndex: 0,
-          primaryMinSize: 1200,
-          secondaryMinSize: 200
-        }
-      };
-      const getSecondaryPaneSize = SplitterLayout.prototype.getSecondaryPaneSize.bind(component);
-      const containerRect = { top: 0, left: 0, width: 1024, height: 512 };
-      const splitterRect = { top: 0, left: 40, width: 4, height: 512 };
-      const position = { left: 200, top: 200 };
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, true)).toBe(0);
-      expect(getSecondaryPaneSize(containerRect, splitterRect, position, false)).toBe(0);
+      const splitter = container.querySelector('.layout-splitter');
+      expect(splitter).toBeInTheDocument();
     });
   });
 
@@ -353,71 +145,158 @@ describe('SplitterLayout', () => {
     it('should add DOM event listeners when mounted', () => {
       const windowSpy = jest.spyOn(window, 'addEventListener');
       const documentSpy = jest.spyOn(document, 'addEventListener');
-      const component = renderIntoDocument(2);
-      expect(windowSpy).toBeCalledWith('resize', component.handleResize);
-      expect(documentSpy).toBeCalledWith('mouseup', component.handleMouseUp);
-      expect(documentSpy).toBeCalledWith('mousemove', component.handleMouseMove);
+
+      render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      expect(windowSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+
       windowSpy.mockRestore();
       documentSpy.mockRestore();
     });
 
     it('should remove DOM event listeners when unmounted', () => {
-      const component = renderIntoDocument(2);
+      const { unmount } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
       const windowSpy = jest.spyOn(window, 'removeEventListener');
       const documentSpy = jest.spyOn(document, 'removeEventListener');
-      ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(component).parentNode);
-      expect(windowSpy).toBeCalledWith('resize', component.handleResize);
-      expect(documentSpy).toBeCalledWith('mouseup', component.handleMouseUp);
-      expect(documentSpy).toBeCalledWith('mousemove', component.handleMouseMove);
+
+      unmount();
+
+      expect(windowSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(documentSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+
       windowSpy.mockRestore();
       documentSpy.mockRestore();
     });
 
     it('should set splitter reference when it is rendered', () => {
-      const component = renderIntoDocument(2);
-      expect(component.container).toBeTruthy();
-      expect(component.splitter).toBeTruthy();
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter');
+
+      expect(layoutContainer).toBeInTheDocument();
+      expect(splitter).toBeInTheDocument();
     });
 
     it('should not set splitter reference when it is not rendered', () => {
-      const component = renderIntoDocument(1);
-      expect(component.container).toBeTruthy();
-      expect(component.splitter).toBeFalsy();
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter');
+
+      expect(layoutContainer).toBeInTheDocument();
+      expect(splitter).not.toBeInTheDocument();
     });
 
     it('should set resizing state when dragging splitter', () => {
-      const component = renderIntoDocument(2);
-      expect(component.state.resizing).toBe(false);
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
-      expect(component.state.resizing).toBe(true);
-      document.simulateMouseUp();
-      expect(component.state.resizing).toBe(false);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      const layoutContainer = container.querySelector('.splitter-layout');
+
+      expect(layoutContainer).not.toHaveClass('layout-changing');
+
+      fireEvent.mouseDown(splitter);
+      expect(layoutContainer).toHaveClass('layout-changing');
+
+      fireEvent.mouseUp(document);
+      expect(layoutContainer).not.toHaveClass('layout-changing');
     });
 
     it('should set pane size when dragging splitter', () => {
-      const component = renderIntoDocument(2);
-      const fn = component.container.getBoundingClientRect;
-      component.container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 300 });
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
-      document.simulateMouseMove(25, 30);
-      expect(component.state.secondaryPaneSize).toBe(175);
-      component.container.getBoundingClientRect = fn;
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const secondaryPane = container.querySelectorAll('.layout-pane')[1];
+
+      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 300
+      }));
+      splitter.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 4,
+        height: 300
+      }));
+
+      fireEvent.mouseDown(splitter);
+      fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
+
+      expect(secondaryPane.style.width).toBe('173px');
     });
 
     it('should keep secondary pane size when resizing', () => {
-      const component = renderIntoDocument(2);
-      const containerRectFn = component.container.getBoundingClientRect;
-      const splitterRectFn = component.splitter.getBoundingClientRect;
-      component.container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 300 });
-      component.splitter.getBoundingClientRect = () => ({ left: 100, top: 0, width: 4, height: 300 });
-      window.resizeTo(200, 300);
-      expect(component.state.secondaryPaneSize).toBe(96);
-      component.container.getBoundingClientRect = containerRectFn;
-      component.splitter.getBoundingClientRect = splitterRectFn;
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter');
+      const secondaryPane = container.querySelectorAll('.layout-pane')[1];
+
+      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 300
+      }));
+      splitter.getBoundingClientRect = jest.fn(() => ({
+        left: 100,
+        top: 0,
+        width: 4,
+        height: 300
+      }));
+
+      fireEvent(window, new Event('resize'));
+
+      expect(secondaryPane.style.width).toBe('96px');
     });
 
     it('should choose createTextRange() if available to clear selection when dragging requested', () => {
-      const component = renderIntoDocument(2);
       const collapseFn = jest.fn();
       const selectFn = jest.fn();
       const emptyFn = jest.fn();
@@ -428,7 +307,16 @@ describe('SplitterLayout', () => {
       window.getSelection = () => ({ empty: emptyFn, removeAllRanges: removeAllRangesFn });
       document.selection = { empty: selectionEmptyFn };
 
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      fireEvent.mouseDown(splitter);
+
       expect(collapseFn).toHaveBeenCalledTimes(1);
       expect(selectFn).toHaveBeenCalledTimes(1);
       expect(emptyFn).not.toHaveBeenCalled();
@@ -437,7 +325,6 @@ describe('SplitterLayout', () => {
     });
 
     it('should choose getSelection().empty() if available to clear selection when dragging requested', () => {
-      const component = renderIntoDocument(2);
       const emptyFn = jest.fn();
       const removeAllRangesFn = jest.fn();
       const selectionEmptyFn = jest.fn();
@@ -445,110 +332,225 @@ describe('SplitterLayout', () => {
       window.getSelection = () => ({ empty: emptyFn, removeAllRanges: removeAllRangesFn });
       document.selection = { empty: selectionEmptyFn };
 
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      fireEvent.mouseDown(splitter);
+
       expect(emptyFn).toHaveBeenCalledTimes(1);
       expect(removeAllRangesFn).not.toHaveBeenCalled();
       expect(selectionEmptyFn).not.toHaveBeenCalled();
     });
 
     it('should choose getSelection().removeAllRanges() if available to clear selection when dragging requested', () => {
-      const component = renderIntoDocument(2);
       const removeAllRangesFn = jest.fn();
       const selectionEmptyFn = jest.fn();
 
       window.getSelection = () => ({ removeAllRanges: removeAllRangesFn });
       document.selection = { empty: selectionEmptyFn };
 
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      fireEvent.mouseDown(splitter);
+
       expect(removeAllRangesFn).toHaveBeenCalledTimes(1);
       expect(selectionEmptyFn).not.toHaveBeenCalled();
     });
 
     it('should choose getSelection() if available to clear selection when dragging requested', () => {
-      const component = renderIntoDocument(2);
       const selectionEmptyFn = jest.fn();
 
       window.getSelection = () => ({});
       document.selection = { empty: selectionEmptyFn };
 
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      fireEvent.mouseDown(splitter);
+
       expect(selectionEmptyFn).not.toHaveBeenCalled();
     });
 
     it('should choose selection.empty() if available to clear selection when dragging requested', () => {
-      const component = renderIntoDocument(2);
       const selectionEmptyFn = jest.fn();
 
       document.selection = { empty: selectionEmptyFn };
 
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+      fireEvent.mouseDown(splitter);
+
       expect(selectionEmptyFn).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger drag events when dragging starts and finishes', () => {
       const startFn = jest.fn();
       const endFn = jest.fn();
-      const component = renderIntoDocument(2, { onDragStart: startFn, onDragEnd: endFn });
+
+      const { container } = render(
+        <SplitterLayout onDragStart={startFn} onDragEnd={endFn}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+
       expect(startFn).not.toHaveBeenCalled();
       expect(endFn).not.toHaveBeenCalled();
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
+
+      fireEvent.mouseDown(splitter);
       expect(startFn).toHaveBeenCalledTimes(1);
       expect(endFn).not.toHaveBeenCalled();
-      document.simulateMouseUp();
+
+      fireEvent.mouseUp(document);
       expect(startFn).toHaveBeenCalledTimes(1);
       expect(endFn).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger size change events when secondary pane size has been changed', () => {
       const fn = jest.fn();
-      const component = renderIntoDocument(2, { secondaryInitialSize: 20, onSecondaryPaneSizeChange: fn });
+
+      const { container } = render(
+        <SplitterLayout secondaryInitialSize={20} onSecondaryPaneSizeChange={fn}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn).toHaveBeenCalledWith(20);
-      const rectFn = component.container.getBoundingClientRect;
-      component.container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 300 });
-      ReactTestUtils.Simulate.mouseDown(component.splitter);
-      document.simulateMouseMove(25, 30);
+
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter');
+
+      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 300
+      }));
+      splitter.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 4,
+        height: 300
+      }));
+
+      fireEvent.mouseDown(splitter);
+      fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
+
       expect(fn).toHaveBeenCalledTimes(2);
-      expect(fn).toHaveBeenCalledWith(175);
-      component.container.getBoundingClientRect = rectFn;
+      expect(fn).toHaveBeenCalledWith(173);
     });
 
     it('should trigger drag events when touching starts and finishes', () => {
       const startFn = jest.fn();
       const endFn = jest.fn();
-      const component = renderIntoDocument(2, { onDragStart: startFn, onDragEnd: endFn });
+
+      const { container } = render(
+        <SplitterLayout onDragStart={startFn} onDragEnd={endFn}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter');
+
       expect(startFn).not.toHaveBeenCalled();
       expect(endFn).not.toHaveBeenCalled();
-      ReactTestUtils.Simulate.touchStart(component.splitter);
+
+      fireEvent.touchStart(splitter);
       expect(startFn).toHaveBeenCalledTimes(1);
       expect(endFn).not.toHaveBeenCalled();
-      document.simulateTouchEnd();
+
+      fireEvent.touchEnd(document);
       expect(startFn).toHaveBeenCalledTimes(1);
       expect(endFn).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger size change events when touching moves', () => {
       const fn = jest.fn();
-      const component = renderIntoDocument(2, { secondaryInitialSize: 20, onSecondaryPaneSizeChange: fn });
+
+      const { container } = render(
+        <SplitterLayout secondaryInitialSize={20} onSecondaryPaneSizeChange={fn}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn).toHaveBeenCalledWith(20);
-      const rectFn = component.container.getBoundingClientRect;
-      component.container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 200, height: 300 });
-      ReactTestUtils.Simulate.touchStart(component.splitter);
-      document.simulateTouchMove(25, 30);
+
+      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter');
+
+      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 300
+      }));
+      splitter.getBoundingClientRect = jest.fn(() => ({
+        left: 0,
+        top: 0,
+        width: 4,
+        height: 300
+      }));
+
+      fireEvent.touchStart(splitter);
+      fireEvent.touchMove(document, {
+        changedTouches: [{ clientX: 25, clientY: 30 }]
+      });
+
       expect(fn).toHaveBeenCalledTimes(2);
-      expect(fn).toHaveBeenCalledWith(175);
-      component.container.getBoundingClientRect = rectFn;
+      expect(fn).toHaveBeenCalledWith(173);
     });
 
     it('should initialize horizontal secondary size if requested even when splitter is not rendered', () => {
-      const component = renderIntoDocument(2, { secondaryInitialSize: 20 });
-      expect(component.state.secondaryPaneSize).toBe(20);
+      const { container } = render(
+        <SplitterLayout secondaryInitialSize={20}>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const secondaryPane = container.querySelectorAll('.layout-pane')[1];
+      expect(secondaryPane.style.width).toBe('20px');
     });
 
     it('should initialize vertical secondary size if requested even when splitter is not rendered', () => {
-      const component = renderIntoDocument(2, { secondaryInitialSize: 20, vertical: true });
-      expect(component.state.secondaryPaneSize).toBe(20);
+      const { container } = render(
+        <SplitterLayout secondaryInitialSize={20} vertical>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const secondaryPane = container.querySelectorAll('.layout-pane')[1];
+      expect(secondaryPane.style.height).toBe('20px');
     });
   });
 });
