@@ -2,7 +2,7 @@ import React from 'react';
 import SplitterLayout from '../../../index';
 import Lorem from './Lorem';
 
-export default function() {
+export default function PercentageLayout() {
   return (
     <SplitterLayout percentage>
       <div className="my-pane">

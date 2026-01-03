@@ -1,9 +1,3 @@
-import { JSDOM } from 'jsdom';
-
-const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
-global.window = jsdom.window;
-global.document = window.document;
-
 // Mock getBoundingClientRect for testing
 Element.prototype.getBoundingClientRect = jest.fn(function getBoundingClientRectMock() {
   return {
