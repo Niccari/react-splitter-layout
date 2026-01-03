@@ -24,6 +24,10 @@ module.exports = {
       {
         from: 'src/stylesheets/*',
         flatten: true
+      },
+      {
+        from: 'index.d.ts',
+        to: 'index.d.ts'
       }
     ])
   ],

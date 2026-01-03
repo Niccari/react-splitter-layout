@@ -18,6 +18,7 @@
     "url": "https://github.com/zesik/react-splitter-layout/issues"
   },
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
     "lib/*"
   ],
