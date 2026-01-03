@@ -146,6 +146,13 @@ The `SplitterLayout` component supports the following props.
 
 ## Release History
 
+* 4.0.1
+  * Add React v19 support with modern testing patterns.
+  * Add TypeScript type definitions for better TypeScript support.
+  * Upgrade dependencies and modernize test infrastructure:
+    - Upgrade Babel to 7, ESLint to 8
+    - Migrate to Jest 30 with modern jest-environment-jsdom
+    - Migrate all tests from ShallowRenderer to @testing-library/react
 * 4.0.0
   * Stylesheets are no longer integrated by default. It has to be handled in your favorite way explicitly.
 * 3.0.0
