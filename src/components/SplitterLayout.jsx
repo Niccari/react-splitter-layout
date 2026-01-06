@@ -31,10 +31,15 @@ class SplitterLayout extends React.Component {
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleTouchMove = this.handleTouchMove.bind(this);
     this.handleSplitterMouseDown = this.handleSplitterMouseDown.bind(this);
+    this.setContainerRef = this.setContainerRef.bind(this);
+    this.setSplitterRef = this.setSplitterRef.bind(this);
     this.state = {
       secondaryPaneSize: 0,
       resizing: false
     };
+    this.rafPending = false;
+    this.latestMouseMoveEvent = null;
+    this.rafId = null;
   }
 
   componentDidMount() {
@@ -85,6 +90,11 @@ class SplitterLayout extends React.Component {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('touchend', this.handleMouseUp);
     document.removeEventListener('touchmove', this.handleTouchMove);
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.rafPending = false;
+    }
   }
 
   // eslint-disable-next-line react/sort-comp
@@ -118,14 +128,25 @@ class SplitterLayout extends React.Component {
 
   handleMouseMove(e) {
     if (this.state.resizing) {
-      const containerRect = this.container.getBoundingClientRect();
-      const splitterRect = this.splitter.getBoundingClientRect();
-      const secondaryPaneSize = this.getSecondaryPaneSize(containerRect, splitterRect, {
-        left: e.clientX,
-        top: e.clientY
-      }, true);
-      clearSelection();
-      this.setState({ secondaryPaneSize });
+      this.latestMouseMoveEvent = e;
+      if (!this.rafPending) {
+        this.rafPending = true;
+        this.rafId = requestAnimationFrame(() => {
+          this.rafPending = false;
+          this.rafId = null;
+          const event = this.latestMouseMoveEvent;
+          if (event && this.state.resizing) {
+            const containerRect = this.container.getBoundingClientRect();
+            const splitterRect = this.splitter.getBoundingClientRect();
+            const secondaryPaneSize = this.getSecondaryPaneSize(containerRect, splitterRect, {
+              left: event.clientX,
+              top: event.clientY
+            }, true);
+            clearSelection();
+            this.setState({ secondaryPaneSize });
+          }
+        });
+      }
     }
   }
 
@@ -139,7 +160,21 @@ class SplitterLayout extends React.Component {
   }
 
   handleMouseUp() {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.rafPending = false;
+    }
+    this.latestMouseMoveEvent = null;
     this.setState((prevState) => (prevState.resizing ? { resizing: false } : null));
+  }
+
+  setContainerRef(c) {
+    this.container = c;
+  }
+
+  setSplitterRef(c) {
+    this.splitter = c;
   }
 
   render() {
@@ -175,14 +210,14 @@ class SplitterLayout extends React.Component {
     }
 
     return (
-      <div className={containerClasses} ref={(c) => { this.container = c; }}>
+      <div className={containerClasses} ref={this.setContainerRef}>
         {wrappedChildren[0]}
         {wrappedChildren.length > 1 &&
           (
             <div
               role="separator"
               className="layout-splitter"
-              ref={(c) => { this.splitter = c; }}
+              ref={this.setSplitterRef}
               onMouseDown={this.handleSplitterMouseDown}
               onTouchStart={this.handleSplitterMouseDown}
             />
