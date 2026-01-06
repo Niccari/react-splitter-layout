@@ -31,6 +31,8 @@ class SplitterLayout extends React.Component {
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleTouchMove = this.handleTouchMove.bind(this);
     this.handleSplitterMouseDown = this.handleSplitterMouseDown.bind(this);
+    this.setContainerRef = this.setContainerRef.bind(this);
+    this.setSplitterRef = this.setSplitterRef.bind(this);
     this.state = {
       secondaryPaneSize: 0,
       resizing: false
@@ -167,6 +169,14 @@ class SplitterLayout extends React.Component {
     this.setState((prevState) => (prevState.resizing ? { resizing: false } : null));
   }
 
+  setContainerRef(c) {
+    this.container = c;
+  }
+
+  setSplitterRef(c) {
+    this.splitter = c;
+  }
+
   render() {
     let containerClasses = 'splitter-layout';
     if (this.props.customClassName) {
@@ -200,14 +210,14 @@ class SplitterLayout extends React.Component {
     }
 
     return (
-      <div className={containerClasses} ref={(c) => { this.container = c; }}>
+      <div className={containerClasses} ref={this.setContainerRef}>
         {wrappedChildren[0]}
         {wrappedChildren.length > 1 &&
           (
             <div
               role="separator"
               className="layout-splitter"
-              ref={(c) => { this.splitter = c; }}
+              ref={this.setSplitterRef}
               onMouseDown={this.handleSplitterMouseDown}
               onTouchStart={this.handleSplitterMouseDown}
             />
