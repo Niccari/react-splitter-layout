@@ -146,6 +146,8 @@ The `SplitterLayout` component supports the following props.
 
 ## Release History
 
+* 4.0.2
+  * perf: Reduce unnecessary re-render during splitter drag operations
 * 4.0.1
   * Add React v19 support with modern testing patterns.
   * Add TypeScript type definitions for better TypeScript support.
