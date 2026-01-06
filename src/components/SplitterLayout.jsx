@@ -35,6 +35,9 @@ class SplitterLayout extends React.Component {
       secondaryPaneSize: 0,
       resizing: false
     };
+    this.rafPending = false;
+    this.latestMouseMoveEvent = null;
+    this.rafId = null;
   }
 
   componentDidMount() {
@@ -85,6 +88,11 @@ class SplitterLayout extends React.Component {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('touchend', this.handleMouseUp);
     document.removeEventListener('touchmove', this.handleTouchMove);
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.rafPending = false;
+    }
   }
 
   // eslint-disable-next-line react/sort-comp
@@ -118,14 +126,25 @@ class SplitterLayout extends React.Component {
 
   handleMouseMove(e) {
     if (this.state.resizing) {
-      const containerRect = this.container.getBoundingClientRect();
-      const splitterRect = this.splitter.getBoundingClientRect();
-      const secondaryPaneSize = this.getSecondaryPaneSize(containerRect, splitterRect, {
-        left: e.clientX,
-        top: e.clientY
-      }, true);
-      clearSelection();
-      this.setState({ secondaryPaneSize });
+      this.latestMouseMoveEvent = e;
+      if (!this.rafPending) {
+        this.rafPending = true;
+        this.rafId = requestAnimationFrame(() => {
+          this.rafPending = false;
+          this.rafId = null;
+          const event = this.latestMouseMoveEvent;
+          if (event && this.state.resizing) {
+            const containerRect = this.container.getBoundingClientRect();
+            const splitterRect = this.splitter.getBoundingClientRect();
+            const secondaryPaneSize = this.getSecondaryPaneSize(containerRect, splitterRect, {
+              left: event.clientX,
+              top: event.clientY
+            }, true);
+            clearSelection();
+            this.setState({ secondaryPaneSize });
+          }
+        });
+      }
     }
   }
 
@@ -139,6 +158,12 @@ class SplitterLayout extends React.Component {
   }
 
   handleMouseUp() {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.rafPending = false;
+    }
+    this.latestMouseMoveEvent = null;
     this.setState((prevState) => (prevState.resizing ? { resizing: false } : null));
   }
 

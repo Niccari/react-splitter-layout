@@ -19,3 +19,11 @@ window.resizeTo = (width, height) => {
   window.innerHeight = height;
   window.dispatchEvent(new Event('resize'));
 };
+
+// Mock requestAnimationFrame to execute synchronously in tests
+global.requestAnimationFrame = (callback) => {
+  callback();
+  return 0;
+};
+
+global.cancelAnimationFrame = () => {};
