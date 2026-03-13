@@ -97,7 +97,6 @@ class SplitterLayout extends React.Component {
     }
   }
 
-  // eslint-disable-next-line react/sort-comp
   getSecondaryPaneSize(containerRect, splitterRect, clientPosition, offsetMouse) {
     return calculateSecondaryPaneSize(
       {
