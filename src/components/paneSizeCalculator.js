@@ -14,7 +14,6 @@
  * @param {boolean} offsetMouse - Whether to offset by half the splitter size
  * @returns {number} Calculated secondary pane size
  */
-// eslint-disable-next-line import/prefer-default-export
 export function calculateSecondaryPaneSize(config, containerRect, splitterRect, clientPosition, offsetMouse) {
   const { vertical, percentage, primaryIndex, primaryMinSize, secondaryMinSize } = config;
 
