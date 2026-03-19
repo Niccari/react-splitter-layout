@@ -7,6 +7,9 @@ export default defineConfig({
     globals: true,
     moduleNameMapper: {
       '\\.(css)$': 'identity-obj-proxy'
+    },
+    coverage: {
+      include: ['src/components/**/*.{ts,tsx}']
     }
   }
 });
