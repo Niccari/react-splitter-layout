@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { calculateSecondaryPaneSize } from '../src/components/paneSizeCalculator';
 
 describe('calculateSecondaryPaneSize', () => {

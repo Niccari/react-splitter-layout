@@ -5,15 +5,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: [
-    './index.js'
+    './index.ts'
   ],
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: 'babel-loader'
       }
@@ -26,10 +26,6 @@ module.exports = {
           {
             from: 'src/stylesheets/index.css',
             to: 'index.css'
-          },
-          {
-            from: 'index.d.ts',
-            to: 'index.d.ts'
           }
         ]
       },
@@ -42,7 +38,6 @@ module.exports = {
     libraryTarget: 'umd'
   },
   externals: {
-    react: 'react',
-    'prop-types': 'prop-types'
+    react: 'react'
   }
 };

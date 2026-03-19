@@ -1,20 +1,30 @@
-/**
- * Calculate the secondary pane size based on container dimensions and splitter position
- * @param {Object} config - Configuration object
- * @param {boolean} config.vertical - Whether the layout is vertical
- * @param {boolean} config.percentage - Whether to use percentage-based sizing
- * @param {number} config.primaryIndex - Index of the primary pane (0 or 1)
- * @param {number} config.primaryMinSize - Minimum size for the primary pane
- * @param {number} config.secondaryMinSize - Minimum size for the secondary pane
- * @param {DOMRect} containerRect - Container bounding rectangle
- * @param {DOMRect} splitterRect - Splitter bounding rectangle
- * @param {Object} clientPosition - Client position object
- * @param {number} clientPosition.left - X coordinate
- * @param {number} clientPosition.top - Y coordinate
- * @param {boolean} offsetMouse - Whether to offset by half the splitter size
- * @returns {number} Calculated secondary pane size
- */
-export function calculateSecondaryPaneSize(config, containerRect, splitterRect, clientPosition, offsetMouse) {
+export interface SizeCalculatorConfig {
+  vertical: boolean;
+  percentage: boolean;
+  primaryIndex: number;
+  primaryMinSize: number;
+  secondaryMinSize: number;
+}
+
+export interface Rect {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+}
+
+export interface ClientPosition {
+  left: number;
+  top: number;
+}
+
+export function calculateSecondaryPaneSize(
+  config: SizeCalculatorConfig,
+  containerRect: Rect,
+  splitterRect: Rect,
+  clientPosition: ClientPosition,
+  offsetMouse: boolean
+): number {
   const { vertical, percentage, primaryIndex, primaryMinSize, secondaryMinSize } = config;
 
   let totalSize;

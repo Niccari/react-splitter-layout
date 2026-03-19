@@ -1,6 +1,7 @@
 import React from 'react';
+import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import Pane from '../src/components/Pane';
 
 describe('Pane', () => {
@@ -8,7 +9,8 @@ describe('Pane', () => {
     const { container } = render(<Pane>test pane</Pane>);
     const pane = container.firstChild;
 
-    expect(pane.tagName).toBe('DIV');
+    expect(pane).not.toBeNull();
+    expect((pane as HTMLElement).tagName).toBe('DIV');
     expect(pane).toHaveClass('layout-pane');
     expect(pane).toHaveStyle({ width: '0px' });
     expect(pane).toHaveTextContent('test pane');
@@ -20,7 +22,8 @@ describe('Pane', () => {
     );
     const pane = container.firstChild;
 
-    expect(pane.tagName).toBe('DIV');
+    expect(pane).not.toBeNull();
+    expect((pane as HTMLElement).tagName).toBe('DIV');
     expect(pane).toHaveClass('layout-pane');
     expect(pane).toHaveStyle({ height: '2%' });
     expect(pane).toHaveTextContent('test pane');
@@ -32,8 +35,9 @@ describe('Pane', () => {
         test pane
       </Pane>
     );
-    const pane = container.firstChild;
+    const pane = container.firstChild as HTMLElement;
 
+    expect(pane).not.toBeNull();
     expect(pane.tagName).toBe('DIV');
     expect(pane).toHaveClass('layout-pane');
     expect(pane).toHaveClass('layout-pane-primary');
