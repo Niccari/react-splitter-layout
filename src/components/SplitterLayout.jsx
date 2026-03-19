@@ -3,24 +3,6 @@ import PropTypes from 'prop-types';
 import Pane from './Pane';
 import { calculateSecondaryPaneSize } from './paneSizeCalculator';
 
-function clearSelection() {
-  if (document.body.createTextRange) {
-    // https://github.com/zesik/react-splitter-layout/issues/16
-    // https://stackoverflow.com/questions/22914075/#37580789
-    const range = document.body.createTextRange();
-    range.collapse();
-    range.select();
-  } else if (window.getSelection) {
-    if (window.getSelection().empty) {
-      window.getSelection().empty();
-    } else if (window.getSelection().removeAllRanges) {
-      window.getSelection().removeAllRanges();
-    }
-  } else if (document.selection) {
-    document.selection.empty();
-  }
-}
-
 const DEFAULT_SPLITTER_SIZE = 4;
 
 class SplitterLayout extends React.Component {
@@ -141,7 +123,6 @@ class SplitterLayout extends React.Component {
               left: event.clientX,
               top: event.clientY
             }, true);
-            clearSelection();
             this.setState({ secondaryPaneSize });
           }
         });
@@ -153,8 +134,8 @@ class SplitterLayout extends React.Component {
     this.handleMouseMove(e.changedTouches[0]);
   }
 
-  handleSplitterMouseDown() {
-    clearSelection();
+  handleSplitterMouseDown(e) {
+    e.preventDefault();
     this.setState({ resizing: true });
   }
 
