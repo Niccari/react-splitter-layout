@@ -212,6 +212,28 @@ describe('SplitterLayout', () => {
       removeSpy.mockRestore();
     });
 
+    it('should remove drag listeners when unmounted during drag', () => {
+      const { container, unmount } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
+      fireEvent.mouseDown(splitter);
+
+      const removeSpy = vi.spyOn(document, 'removeEventListener');
+      unmount();
+
+      expect(removeSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+
+      removeSpy.mockRestore();
+    });
+
     it('should set splitter reference when it is rendered', () => {
       const { container } = render(
         <SplitterLayout>
