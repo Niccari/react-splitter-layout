@@ -46,6 +46,19 @@ This is a React component library that provides a draggable splitter layout. It 
 - `primaryIndex` (0 or 1) determines which child is primary. The other child is always the secondary pane.
 - Max 2 children are rendered; additional children are ignored.
 - Event handler callbacks (`onDragStart`, `onDragEnd`, `onSecondaryPaneSizeChange`) are called directly within handlers rather than via `useEffect`, using prop refs to avoid stale closures.
+- The `useEffect` in `SplitterLayout` uses an intentionally empty dependency array (`[]`) — it runs only on mount. All handlers inside it are stable via `useCallback` + prop refs. Do not add dependencies to this array.
+- `secondaryInitialSize` is read only once at mount time; changing it after mount has no effect.
+
+### CSS class names
+
+The following classes are applied to the DOM and can be used for custom styling:
+
+- `.splitter-layout` — outer container
+- `.splitter-layout-vertical` — added when `vertical={true}`
+- `.layout-changing` — added to the container during an active drag
+- `.layout-pane` — each child pane wrapper
+- `.layout-pane-primary` — added to the primary pane
+- `.layout-splitter` — the draggable divider element
 
 ### Build output
 
@@ -55,4 +68,4 @@ webpack builds to `lib/` as a UMD library with `react` as an external. `tsc --em
 
 Tests use Vitest + jsdom + `@testing-library/react`. CSS imports are mocked via `identity-obj-proxy`. Tests live in `test/` alongside spec files for each source module.
 
-ESLint uses flat config (`eslint.config.mjs`) with `typescript-eslint` for `.ts`/`.tsx` files. Max line length is 120.
+ESLint uses flat config (`eslint.config.mjs`) with `typescript-eslint` for `.ts`/`.tsx` files and covers `src/`, `test/`, `example/`, and `index.ts`. Max line length is 120.
