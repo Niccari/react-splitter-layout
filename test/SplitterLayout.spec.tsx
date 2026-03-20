@@ -1,6 +1,7 @@
 import React from 'react';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import SplitterLayout from '../src/components/SplitterLayout';
 
 describe('SplitterLayout', () => {
@@ -13,7 +14,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
       expect(layoutContainer).not.toHaveClass('splitter-layout-vertical');
@@ -40,7 +41,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
       expect(layoutContainer).toHaveClass('custom-class');
@@ -63,7 +64,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
 
@@ -79,7 +80,7 @@ describe('SplitterLayout', () => {
     it('should render one child when nothing provided', () => {
       const { container } = render(<SplitterLayout />);
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
 
@@ -98,7 +99,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
 
@@ -121,7 +122,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.firstChild;
+      const layoutContainer = container.firstChild as HTMLElement;
       expect(layoutContainer.tagName).toBe('DIV');
       expect(layoutContainer).toHaveClass('splitter-layout');
 
@@ -137,14 +138,14 @@ describe('SplitterLayout', () => {
 
   describe('DOM', () => {
     afterEach(() => {
-      document.body.createTextRange = undefined;
-      window.getSelection = undefined;
-      document.selection = undefined;
+      (document.body as any).createTextRange = undefined;
+      (window as any).getSelection = undefined;
+      (document as any).selection = undefined;
     });
 
     it('should add DOM event listeners when mounted', () => {
-      const windowSpy = jest.spyOn(window, 'addEventListener');
-      const documentSpy = jest.spyOn(document, 'addEventListener');
+      const windowSpy = vi.spyOn(window, 'addEventListener');
+      const documentSpy = vi.spyOn(document, 'addEventListener');
 
       render(
         <SplitterLayout>
@@ -171,8 +172,8 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const windowSpy = jest.spyOn(window, 'removeEventListener');
-      const documentSpy = jest.spyOn(document, 'removeEventListener');
+      const windowSpy = vi.spyOn(window, 'removeEventListener');
+      const documentSpy = vi.spyOn(document, 'removeEventListener');
 
       unmount();
 
@@ -223,8 +224,8 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const splitter = container.querySelector('.layout-splitter');
-      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
+      const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
 
       expect(layoutContainer).not.toHaveClass('layout-changing');
 
@@ -243,27 +244,27 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const splitter = container.querySelector('.layout-splitter');
-      const layoutContainer = container.querySelector('.splitter-layout');
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
+      const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
 
-      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+      layoutContainer.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 200,
         height: 300
-      }));
-      splitter.getBoundingClientRect = jest.fn(() => ({
+      } as DOMRect));
+      splitter.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 4,
         height: 300
-      }));
+      } as DOMRect));
 
       fireEvent.mouseDown(splitter);
       fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
 
-      expect(secondaryPane.style.width).toBe('173px');
+      expect((secondaryPane as HTMLElement).style.width).toBe('173px');
     });
 
     it('should keep secondary pane size when resizing', () => {
@@ -274,31 +275,31 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const layoutContainer = container.querySelector('.splitter-layout');
-      const splitter = container.querySelector('.layout-splitter');
+      const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
 
-      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+      layoutContainer.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 200,
         height: 300
-      }));
-      splitter.getBoundingClientRect = jest.fn(() => ({
+      } as DOMRect));
+      splitter.getBoundingClientRect = vi.fn(() => ({
         left: 100,
         top: 0,
         width: 4,
         height: 300
-      }));
+      } as DOMRect));
 
       fireEvent(window, new Event('resize'));
 
-      expect(secondaryPane.style.width).toBe('96px');
+      expect((secondaryPane as HTMLElement).style.width).toBe('96px');
     });
 
     it('should trigger drag events when dragging starts and finishes', () => {
-      const startFn = jest.fn();
-      const endFn = jest.fn();
+      const startFn = vi.fn();
+      const endFn = vi.fn();
 
       const { container } = render(
         <SplitterLayout onDragStart={startFn} onDragEnd={endFn}>
@@ -307,7 +308,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const splitter = container.querySelector('.layout-splitter');
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
       expect(startFn).not.toHaveBeenCalled();
       expect(endFn).not.toHaveBeenCalled();
@@ -322,7 +323,7 @@ describe('SplitterLayout', () => {
     });
 
     it('should trigger size change events when secondary pane size has been changed', () => {
-      const fn = jest.fn();
+      const fn = vi.fn();
 
       const { container } = render(
         <SplitterLayout secondaryInitialSize={20} onSecondaryPaneSizeChange={fn}>
@@ -334,21 +335,21 @@ describe('SplitterLayout', () => {
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn).toHaveBeenCalledWith(20);
 
-      const layoutContainer = container.querySelector('.splitter-layout');
-      const splitter = container.querySelector('.layout-splitter');
+      const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
-      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+      layoutContainer.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 200,
         height: 300
-      }));
-      splitter.getBoundingClientRect = jest.fn(() => ({
+      } as DOMRect));
+      splitter.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 4,
         height: 300
-      }));
+      } as DOMRect));
 
       fireEvent.mouseDown(splitter);
       fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
@@ -358,8 +359,8 @@ describe('SplitterLayout', () => {
     });
 
     it('should trigger drag events when touching starts and finishes', () => {
-      const startFn = jest.fn();
-      const endFn = jest.fn();
+      const startFn = vi.fn();
+      const endFn = vi.fn();
 
       const { container } = render(
         <SplitterLayout onDragStart={startFn} onDragEnd={endFn}>
@@ -368,7 +369,7 @@ describe('SplitterLayout', () => {
         </SplitterLayout>
       );
 
-      const splitter = container.querySelector('.layout-splitter');
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
       expect(startFn).not.toHaveBeenCalled();
       expect(endFn).not.toHaveBeenCalled();
@@ -383,7 +384,7 @@ describe('SplitterLayout', () => {
     });
 
     it('should trigger size change events when touching moves', () => {
-      const fn = jest.fn();
+      const fn = vi.fn();
 
       const { container } = render(
         <SplitterLayout secondaryInitialSize={20} onSecondaryPaneSizeChange={fn}>
@@ -395,21 +396,21 @@ describe('SplitterLayout', () => {
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn).toHaveBeenCalledWith(20);
 
-      const layoutContainer = container.querySelector('.splitter-layout');
-      const splitter = container.querySelector('.layout-splitter');
+      const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
-      layoutContainer.getBoundingClientRect = jest.fn(() => ({
+      layoutContainer.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 200,
         height: 300
-      }));
-      splitter.getBoundingClientRect = jest.fn(() => ({
+      } as DOMRect));
+      splitter.getBoundingClientRect = vi.fn(() => ({
         left: 0,
         top: 0,
         width: 4,
         height: 300
-      }));
+      } as DOMRect));
 
       fireEvent.touchStart(splitter);
       fireEvent.touchMove(document, {
@@ -429,7 +430,7 @@ describe('SplitterLayout', () => {
       );
 
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
-      expect(secondaryPane.style.width).toBe('20px');
+      expect((secondaryPane as HTMLElement).style.width).toBe('20px');
     });
 
     it('should initialize vertical secondary size if requested even when splitter is not rendered', () => {
@@ -441,7 +442,7 @@ describe('SplitterLayout', () => {
       );
 
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
-      expect(secondaryPane.style.height).toBe('20px');
+      expect((secondaryPane as HTMLElement).style.height).toBe('20px');
     });
   });
 });
