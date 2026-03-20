@@ -92,6 +92,12 @@ function SplitterLayout({
   const latestMoveRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const resizingRef = useRef(false);
+  const registeredListenersRef = useRef<{
+    mouseUp: () => void;
+    mouseMove: (e: MouseEvent) => void;
+    touchEnd: () => void;
+    touchMove: (e: TouchEvent) => void;
+  } | null>(null);
 
   // Keep latest prop values in refs so event handlers remain stable
   const verticalRef = useRef(vertical);
@@ -177,6 +183,17 @@ function SplitterLayout({
     processMoveAt(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   }, [processMoveAt]);
 
+  const removeDragListeners = useCallback(() => {
+    const listeners = registeredListenersRef.current;
+    if (listeners) {
+      document.removeEventListener('mouseup', listeners.mouseUp);
+      document.removeEventListener('mousemove', listeners.mouseMove);
+      document.removeEventListener('touchend', listeners.touchEnd);
+      document.removeEventListener('touchmove', listeners.touchMove);
+      registeredListenersRef.current = null;
+    }
+  }, []);
+
   const handleMouseUp = useCallback(() => {
     if (rafIdRef.current !== null) {
       cancelAnimationFrame(rafIdRef.current);
@@ -189,21 +206,28 @@ function SplitterLayout({
       setResizing(false);
       onDragEndRef.current?.();
     }
-  }, []);
+    removeDragListeners();
+  }, [removeDragListeners]);
 
   const handleSplitterMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     resizingRef.current = true;
     setResizing(true);
     onDragStartRef.current?.();
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    registeredListenersRef.current = {
+      mouseUp: handleMouseUp,
+      mouseMove: handleMouseMove,
+      touchEnd: handleMouseUp,
+      touchMove: handleTouchMove
+    };
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('touchend', handleMouseUp);
     document.addEventListener('touchmove', handleTouchMove);
+  }, [handleMouseUp, handleMouseMove, handleTouchMove]);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
 
     let initialSize: number;
     if (secondaryInitialSize !== undefined) {
@@ -226,10 +250,8 @@ function SplitterLayout({
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('touchend', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
+      // Defensive cleanup: remove drag listeners if component unmounts mid-drag
+      removeDragListeners();
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
