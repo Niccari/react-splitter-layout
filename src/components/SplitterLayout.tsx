@@ -92,6 +92,7 @@ function SplitterLayout({
   const latestMoveRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const resizingRef = useRef(false);
+  const handleMouseUpRef = useRef<(() => void) | null>(null);
 
   // Keep latest prop values in refs so event handlers remain stable
   const verticalRef = useRef(vertical);
@@ -189,21 +190,27 @@ function SplitterLayout({
       setResizing(false);
       onDragEndRef.current?.();
     }
-  }, []);
+    document.removeEventListener('mouseup', handleMouseUpRef.current!);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('touchend', handleMouseUpRef.current!);
+    document.removeEventListener('touchmove', handleTouchMove);
+  }, [handleMouseMove, handleTouchMove]);
+
+  handleMouseUpRef.current = handleMouseUp;
 
   const handleSplitterMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     resizingRef.current = true;
     setResizing(true);
     onDragStartRef.current?.();
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('touchend', handleMouseUp);
     document.addEventListener('touchmove', handleTouchMove);
+  }, [handleMouseUp, handleMouseMove, handleTouchMove]);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
 
     let initialSize: number;
     if (secondaryInitialSize !== undefined) {
@@ -226,9 +233,12 @@ function SplitterLayout({
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      document.removeEventListener('mouseup', handleMouseUp);
+      // Defensive cleanup: remove drag listeners if component unmounts mid-drag
+      if (handleMouseUpRef.current) {
+        document.removeEventListener('mouseup', handleMouseUpRef.current);
+        document.removeEventListener('touchend', handleMouseUpRef.current);
+      }
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('touchend', handleMouseUp);
       document.removeEventListener('touchmove', handleTouchMove);
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);

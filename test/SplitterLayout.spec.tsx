@@ -155,10 +155,10 @@ describe('SplitterLayout', () => {
       );
 
       expect(windowSpy).toHaveBeenCalledWith('resize', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+      expect(documentSpy).not.toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(documentSpy).not.toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(documentSpy).not.toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(documentSpy).not.toHaveBeenCalledWith('touchmove', expect.any(Function));
 
       windowSpy.mockRestore();
       documentSpy.mockRestore();
@@ -173,18 +173,43 @@ describe('SplitterLayout', () => {
       );
 
       const windowSpy = vi.spyOn(window, 'removeEventListener');
-      const documentSpy = vi.spyOn(document, 'removeEventListener');
 
       unmount();
 
       expect(windowSpy).toHaveBeenCalledWith('resize', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
-      expect(documentSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
 
       windowSpy.mockRestore();
-      documentSpy.mockRestore();
+    });
+
+    it('should register and unregister drag listeners on document when drag starts and ends', () => {
+      const { container } = render(
+        <SplitterLayout>
+          <div>Child #0</div>
+          <div>Child #1</div>
+        </SplitterLayout>
+      );
+
+      const splitter = container.querySelector('.layout-splitter') as HTMLElement;
+
+      const addSpy = vi.spyOn(document, 'addEventListener');
+      const removeSpy = vi.spyOn(document, 'removeEventListener');
+
+      fireEvent.mouseDown(splitter);
+
+      expect(addSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(addSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(addSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(addSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+
+      fireEvent.mouseUp(document);
+
+      expect(removeSpy).toHaveBeenCalledWith('mouseup', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('mousemove', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
+
+      addSpy.mockRestore();
+      removeSpy.mockRestore();
     });
 
     it('should set splitter reference when it is rendered', () => {
