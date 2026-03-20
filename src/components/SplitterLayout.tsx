@@ -183,6 +183,17 @@ function SplitterLayout({
     processMoveAt(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   }, [processMoveAt]);
 
+  const removeDragListeners = useCallback(() => {
+    const listeners = registeredListenersRef.current;
+    if (listeners) {
+      document.removeEventListener('mouseup', listeners.mouseUp);
+      document.removeEventListener('mousemove', listeners.mouseMove);
+      document.removeEventListener('touchend', listeners.touchEnd);
+      document.removeEventListener('touchmove', listeners.touchMove);
+      registeredListenersRef.current = null;
+    }
+  }, []);
+
   const handleMouseUp = useCallback(() => {
     if (rafIdRef.current !== null) {
       cancelAnimationFrame(rafIdRef.current);
@@ -195,15 +206,8 @@ function SplitterLayout({
       setResizing(false);
       onDragEndRef.current?.();
     }
-    const listeners = registeredListenersRef.current;
-    if (listeners) {
-      document.removeEventListener('mouseup', listeners.mouseUp);
-      document.removeEventListener('mousemove', listeners.mouseMove);
-      document.removeEventListener('touchend', listeners.touchEnd);
-      document.removeEventListener('touchmove', listeners.touchMove);
-      registeredListenersRef.current = null;
-    }
-  }, []);
+    removeDragListeners();
+  }, [removeDragListeners]);
 
   const handleSplitterMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -247,13 +251,7 @@ function SplitterLayout({
     return () => {
       window.removeEventListener('resize', handleResize);
       // Defensive cleanup: remove drag listeners if component unmounts mid-drag
-      const listeners = registeredListenersRef.current;
-      if (listeners) {
-        document.removeEventListener('mouseup', listeners.mouseUp);
-        document.removeEventListener('mousemove', listeners.mouseMove);
-        document.removeEventListener('touchend', listeners.touchEnd);
-        document.removeEventListener('touchmove', listeners.touchMove);
-      }
+      removeDragListeners();
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;

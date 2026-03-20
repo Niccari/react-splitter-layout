@@ -173,12 +173,15 @@ describe('SplitterLayout', () => {
       );
 
       const windowSpy = vi.spyOn(window, 'removeEventListener');
+      const documentSpy = vi.spyOn(document, 'removeEventListener');
 
       unmount();
 
       expect(windowSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+      expect(documentSpy).not.toHaveBeenCalled();
 
       windowSpy.mockRestore();
+      documentSpy.mockRestore();
     });
 
     it('should register and unregister drag listeners on document when drag starts and ends', () => {
