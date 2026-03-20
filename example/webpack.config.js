@@ -4,12 +4,12 @@ module.exports = {
     './javascripts/index.jsx'
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.css']
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: [
           {
@@ -17,7 +17,8 @@ module.exports = {
             options: {
               presets: [
                 '@babel/env',
-                '@babel/react'
+                '@babel/react',
+                '@babel/preset-typescript'
               ]
             }
           }
