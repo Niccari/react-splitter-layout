@@ -143,6 +143,13 @@ The `SplitterLayout` component supports the following props. All props are optio
 
 ## Release History
 
+* 4.1.0
+  * feat: Migrate source to TypeScript with type definitions
+  * fix: Prevent text selection during drag using CSS and preventDefault
+  * fix: Replace handleMouseUpRef with registeredListenersRef to prevent stale ref listener leak
+  * perf: Register drag listeners on document only during drag
+  * refactor: Extract removeDragListeners helper
+  * chore: Migrate ESLint v8 to v9 with flat config
 * 4.0.2
   * perf: Reduce unnecessary re-render during splitter drag operations
 * 4.0.1
