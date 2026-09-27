@@ -143,6 +143,9 @@ The `SplitterLayout` component supports the following props. All props are optio
 
 ## Release History
 
+* 4.1.2
+  * chore: Upgrade Vite to 8, Vitest to 5, and TypeScript to 7
+  * chore: Migrate linting and formatting from ESLint to Biome
 * 4.1.1
   * chore: Update dev dependencies (Babel 8, Vitest 4, TypeScript 6, jsdom 29)
 * 4.1.0
