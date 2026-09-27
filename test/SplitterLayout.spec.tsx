@@ -30,12 +30,7 @@ describe('SplitterLayout', () => {
 
     it('should render properties correctly if requested', () => {
       const { container } = render(
-        <SplitterLayout
-          customClassName="custom-class"
-          vertical
-          percentage
-          primaryIndex={1}
-        >
+        <SplitterLayout customClassName="custom-class" vertical percentage primaryIndex={1}>
           <div>Child #0</div>
           <div>Child #1</div>
         </SplitterLayout>
@@ -298,18 +293,24 @@ describe('SplitterLayout', () => {
       const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
 
-      layoutContainer.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 200,
-        height: 300
-      } as DOMRect));
-      splitter.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 4,
-        height: 300
-      } as DOMRect));
+      layoutContainer.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 200,
+            height: 300
+          }) as DOMRect
+      );
+      splitter.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 4,
+            height: 300
+          }) as DOMRect
+      );
 
       fireEvent.mouseDown(splitter);
       fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
@@ -329,18 +330,24 @@ describe('SplitterLayout', () => {
       const splitter = container.querySelector('.layout-splitter') as HTMLElement;
       const secondaryPane = container.querySelectorAll('.layout-pane')[1];
 
-      layoutContainer.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 200,
-        height: 300
-      } as DOMRect));
-      splitter.getBoundingClientRect = vi.fn(() => ({
-        left: 100,
-        top: 0,
-        width: 4,
-        height: 300
-      } as DOMRect));
+      layoutContainer.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 200,
+            height: 300
+          }) as DOMRect
+      );
+      splitter.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 100,
+            top: 0,
+            width: 4,
+            height: 300
+          }) as DOMRect
+      );
 
       fireEvent(window, new Event('resize'));
 
@@ -388,18 +395,24 @@ describe('SplitterLayout', () => {
       const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
       const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
-      layoutContainer.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 200,
-        height: 300
-      } as DOMRect));
-      splitter.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 4,
-        height: 300
-      } as DOMRect));
+      layoutContainer.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 200,
+            height: 300
+          }) as DOMRect
+      );
+      splitter.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 4,
+            height: 300
+          }) as DOMRect
+      );
 
       fireEvent.mouseDown(splitter);
       fireEvent.mouseMove(document, { clientX: 25, clientY: 30 });
@@ -449,18 +462,24 @@ describe('SplitterLayout', () => {
       const layoutContainer = container.querySelector('.splitter-layout') as HTMLElement;
       const splitter = container.querySelector('.layout-splitter') as HTMLElement;
 
-      layoutContainer.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 200,
-        height: 300
-      } as DOMRect));
-      splitter.getBoundingClientRect = vi.fn(() => ({
-        left: 0,
-        top: 0,
-        width: 4,
-        height: 300
-      } as DOMRect));
+      layoutContainer.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 200,
+            height: 300
+          }) as DOMRect
+      );
+      splitter.getBoundingClientRect = vi.fn(
+        () =>
+          ({
+            left: 0,
+            top: 0,
+            width: 4,
+            height: 300
+          }) as DOMRect
+      );
 
       fireEvent.touchStart(splitter);
       fireEvent.touchMove(document, {

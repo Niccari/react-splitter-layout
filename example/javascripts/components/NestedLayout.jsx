@@ -10,7 +10,8 @@ export default function NestedLayout() {
         <p>This is the 1st pane.</p>
         <pre>
           &lt;SplitterLayout primaryIndex={'{1}'} secondaryInitialSize={'{250}'}&gt;{'\n'}
-          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>{'\n'}
+          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>
+          {'\n'}
           &nbsp;&nbsp;&lt;SplitterLayout secondaryInitialSize={'{250}'}&gt;{'\n'}
           &nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout vertical secondaryInitialSize={'{250}'}&gt;{'\n'}
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;2nd&lt;/div&gt;{'\n'}
@@ -35,7 +36,8 @@ export default function NestedLayout() {
               &nbsp;&nbsp;&lt;div&gt;1st&lt;/div&gt;{'\n'}
               &nbsp;&nbsp;&lt;SplitterLayout secondaryInitialSize={'{250}'}&gt;{'\n'}
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout vertical secondaryInitialSize={'{250}'}&gt;{'\n'}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>{'\n'}
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>
+              {'\n'}
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout secondaryInitialSize={'{250}'}&gt;{'\n'}
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;3rd&lt;/div&gt;{'\n'}
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;4th&lt;/div&gt;{'\n'}
@@ -58,7 +60,8 @@ export default function NestedLayout() {
                 &nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout vertical secondaryInitialSize={'{250}'}&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;2nd&lt;/div&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout secondaryInitialSize={'{250}'}&gt;{'\n'}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;3rd&lt;/div&gt;</strong>{'\n'}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;3rd&lt;/div&gt;</strong>
+                {'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;4th&lt;/div&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
@@ -79,7 +82,8 @@ export default function NestedLayout() {
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;2nd&lt;/div&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;SplitterLayout secondaryInitialSize={'{250}'}&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;3rd&lt;/div&gt;{'\n'}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;4th&lt;/div&gt;</strong>{'\n'}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;4th&lt;/div&gt;</strong>
+                {'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
                 &nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;5th&lt;/div&gt;{'\n'}
@@ -104,7 +108,8 @@ export default function NestedLayout() {
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;4th&lt;/div&gt;{'\n'}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
             &nbsp;&nbsp;&nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
-            &nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;5th&lt;/div&gt;</strong>{'\n'}
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>&lt;div&gt;5th&lt;/div&gt;</strong>
+            {'\n'}
             &nbsp;&nbsp;&lt;/SplitterLayout&gt;{'\n'}
             &lt;/SplitterLayout&gt;
           </pre>
