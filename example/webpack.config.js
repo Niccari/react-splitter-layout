@@ -1,8 +1,6 @@
 module.exports = {
   mode: 'development',
-  entry: [
-    './javascripts/index.jsx'
-  ],
+  entry: ['./javascripts/index.jsx'],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
   },
@@ -15,20 +13,14 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              presets: [
-                '@babel/env',
-                ['@babel/react', { runtime: 'classic' }],
-                '@babel/preset-typescript'
-              ]
+              presets: ['@babel/env', ['@babel/react', { runtime: 'classic' }], '@babel/preset-typescript']
             }
           }
         ]
-      }, {
+      },
+      {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
+        use: ['style-loader', 'css-loader']
       }
     ]
   },

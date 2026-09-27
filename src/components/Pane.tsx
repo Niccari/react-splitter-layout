@@ -8,6 +8,7 @@ interface PaneProps {
   children?: React.ReactNode;
 }
 
+// biome-ignore format: Keep one prop per line so changes are easy to review.
 function Pane({
   vertical = false,
   primary = false,
@@ -28,7 +29,9 @@ function Pane({
     classes += ' layout-pane-primary';
   }
   return (
-    <div className={classes} style={style}>{children}</div>
+    <div className={classes} style={style}>
+      {children}
+    </div>
   );
 }
 

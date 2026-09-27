@@ -25,16 +25,12 @@ export default class HorizontalLayoutWithIFrame extends React.Component {
         Refer to the following pages for details:
         <ul>
           <li>
-            <a
-              href="https://github.com/zesik/react-splitter-layout/blob/master/example/javascripts/components/HorizontalLayoutWithIFrame.jsx"
-            >
+            <a href="https://github.com/zesik/react-splitter-layout/blob/master/example/javascripts/components/HorizontalLayoutWithIFrame.jsx">
               Source code of this page
             </a>
           </li>
           <li>
-            <a href="https://github.com/zesik/react-splitter-layout/issues/7">
-              Another way
-            </a>
+            <a href="https://github.com/zesik/react-splitter-layout/issues/7">Another way</a>
           </li>
         </ul>
       </p>
@@ -47,9 +43,9 @@ export default class HorizontalLayoutWithIFrame extends React.Component {
         <div className="my-pane">
           <h2>1st Pane</h2>
           <p>
-            This is the 1st pane, and this is the primary pane by default.
-            The 2nd pane on the right contains an <code>iframe</code> from <code>https://example.com</code>.
-            A simple hack is used so that dragging is not interfered.
+            This is the 1st pane, and this is the primary pane by default. The 2nd pane on the right contains an{' '}
+            <code>iframe</code> from <code>https://example.com</code>. A simple hack is used so that dragging is not
+            interfered.
           </p>
           {this.renderDetailLinks()}
         </div>

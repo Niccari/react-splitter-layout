@@ -11,7 +11,8 @@ export default function PercentageLayout() {
         <p>Try to resize the window and see how size changes.</p>
         <pre>
           &lt;SplitterLayout primaryIndex={'{0}'} percentage&gt;{'\n'}
-          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>{'\n'}
+          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>
+          {'\n'}
           &nbsp;&nbsp;&lt;div&gt;2nd&lt;/div&gt;{'\n'}
           &lt;/SplitterLayout&gt;
         </pre>
@@ -24,7 +25,8 @@ export default function PercentageLayout() {
         <pre>
           &lt;SplitterLayout primaryIndex={'{0}'} percentage&gt;{'\n'}
           &nbsp;&nbsp;&lt;div&gt;1st&lt;/div&gt;{'\n'}
-          &nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>{'\n'}
+          &nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>
+          {'\n'}
           &lt;/SplitterLayout&gt;
         </pre>
         <Lorem title="2nd Pane" />
