@@ -10,7 +10,8 @@ export default function StandardVerticalLayout() {
         <p>This is the 1st pane, and this is the primary pane by default.</p>
         <pre>
           &lt;SplitterLayout primaryIndex={'{0}'}&gt;{'\n'}
-          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>{'\n'}
+          &nbsp;&nbsp;<strong>&lt;div&gt;1st&lt;/div&gt;</strong>
+          {'\n'}
           &nbsp;&nbsp;&lt;div&gt;2nd&lt;/div&gt;{'\n'}
           &lt;/SplitterLayout&gt;
         </pre>
@@ -22,7 +23,8 @@ export default function StandardVerticalLayout() {
         <pre>
           &lt;SplitterLayout primaryIndex={'{0}'}&gt;{'\n'}
           &nbsp;&nbsp;&lt;div&gt;1st&lt;/div&gt;{'\n'}
-          &nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>{'\n'}
+          &nbsp;&nbsp;<strong>&lt;div&gt;2nd&lt;/div&gt;</strong>
+          {'\n'}
           &lt;/SplitterLayout&gt;
         </pre>
         <Lorem title="2nd Pane" />

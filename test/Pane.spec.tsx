@@ -18,7 +18,9 @@ describe('Pane', () => {
 
   it('should render properties of a Pane correctly if requested', () => {
     const { container } = render(
-      <Pane vertical size={2} percentage>test pane</Pane>
+      <Pane vertical size={2} percentage>
+        test pane
+      </Pane>
     );
     const pane = container.firstChild;
 

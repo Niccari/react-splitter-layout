@@ -55,13 +55,25 @@ export default class HorizontalLayoutWithEvents extends React.Component {
         <div className="my-pane">
           <h2>1st Pane</h2>
           <p>This is the 1st pane, and this is the primary pane by default.</p>
-          <p>Dragging:
-            <span className="volatile" ref={(e) => { this.draggingEl1 = e; }}>
+          <p>
+            Dragging:
+            <span
+              className="volatile"
+              ref={(e) => {
+                this.draggingEl1 = e;
+              }}
+            >
               {this.state.dragging ? 'Yes' : 'No'}
             </span>
           </p>
-          <p>Size of the 2nd pane:
-            <span className="volatile" ref={(e) => { this.sizeEl1 = e; }}>
+          <p>
+            Size of the 2nd pane:
+            <span
+              className="volatile"
+              ref={(e) => {
+                this.sizeEl1 = e;
+              }}
+            >
               {this.state.secondaryPaneSize}
             </span>
           </p>
@@ -69,13 +81,25 @@ export default class HorizontalLayoutWithEvents extends React.Component {
         <div className="my-pane">
           <h2>2nd Pane</h2>
           <p>This is the 2nd pane, and this is the secondary pane by default.</p>
-          <p>Dragging:
-            <span className="volatile" ref={(e) => { this.draggingEl2 = e; }}>
+          <p>
+            Dragging:
+            <span
+              className="volatile"
+              ref={(e) => {
+                this.draggingEl2 = e;
+              }}
+            >
               {this.state.dragging ? 'Yes' : 'No'}
             </span>
           </p>
-          <p>Size of this pane:
-            <span className="volatile" ref={(e) => { this.sizeEl2 = e; }}>
+          <p>
+            Size of this pane:
+            <span
+              className="volatile"
+              ref={(e) => {
+                this.sizeEl2 = e;
+              }}
+            >
               {this.state.secondaryPaneSize}
             </span>
           </p>

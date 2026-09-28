@@ -119,69 +119,93 @@ function SplitterLayout({
   onDragStartRef.current = onDragStart;
   onDragEndRef.current = onDragEnd;
 
-  const calcSecondaryPaneSize = useCallback((
-    containerRect: Rect,
-    splitterRect: Rect,
-    clientPosition: ClientPosition,
-    offsetMouse: boolean
-  ) => calculateSecondaryPaneSize(
-    {
-      vertical: verticalRef.current,
-      percentage: percentageRef.current,
-      primaryIndex: primaryIndexRef.current,
-      primaryMinSize: primaryMinSizeRef.current,
-      secondaryMinSize: secondaryMinSizeRef.current
-    },
-    containerRect,
-    splitterRect,
-    clientPosition,
-    offsetMouse
-  ), []);
+  const calcSecondaryPaneSize = useCallback(
+    // biome-ignore format: Keep one parameter per line so changes are easy to review.
+    (
+      containerRect: Rect,
+      splitterRect: Rect,
+      clientPosition: ClientPosition,
+      offsetMouse: boolean
+    ) =>
+      calculateSecondaryPaneSize(
+        {
+          vertical: verticalRef.current,
+          percentage: percentageRef.current,
+          primaryIndex: primaryIndexRef.current,
+          primaryMinSize: primaryMinSizeRef.current,
+          secondaryMinSize: secondaryMinSizeRef.current
+        },
+        containerRect,
+        splitterRect,
+        clientPosition,
+        offsetMouse
+      ),
+    []
+  );
 
   const handleResize = useCallback(() => {
     if (splitterRef.current && !percentageRef.current) {
       const containerRect = containerRef.current!.getBoundingClientRect();
       const splitterRect = splitterRef.current.getBoundingClientRect();
-      const size = calcSecondaryPaneSize(containerRect, splitterRect, {
-        left: splitterRect.left,
-        top: splitterRect.top
-      }, false);
+      const size = calcSecondaryPaneSize(
+        containerRect,
+        splitterRect,
+        {
+          left: splitterRect.left,
+          top: splitterRect.top
+        },
+        false
+      );
       setSecondaryPaneSize(size);
       onSecondaryPaneSizeChangeRef.current?.(size);
     }
   }, [calcSecondaryPaneSize]);
 
-  const processMoveAt = useCallback((clientX: number, clientY: number) => {
-    if (resizingRef.current) {
-      latestMoveRef.current = { clientX, clientY };
-      if (!rafPendingRef.current) {
-        rafPendingRef.current = true;
-        rafIdRef.current = requestAnimationFrame(() => {
-          rafPendingRef.current = false;
-          rafIdRef.current = null;
-          const move = latestMoveRef.current;
-          if (move && resizingRef.current) {
-            const containerRect = containerRef.current!.getBoundingClientRect();
-            const splitterRect = splitterRef.current!.getBoundingClientRect();
-            const size = calcSecondaryPaneSize(containerRect, splitterRect, {
-              left: move.clientX,
-              top: move.clientY
-            }, true);
-            setSecondaryPaneSize(size);
-            onSecondaryPaneSizeChangeRef.current?.(size);
-          }
-        });
+  const processMoveAt = useCallback(
+    (clientX: number, clientY: number) => {
+      if (resizingRef.current) {
+        latestMoveRef.current = { clientX, clientY };
+        if (!rafPendingRef.current) {
+          rafPendingRef.current = true;
+          rafIdRef.current = requestAnimationFrame(() => {
+            rafPendingRef.current = false;
+            rafIdRef.current = null;
+            const move = latestMoveRef.current;
+            if (move && resizingRef.current) {
+              const containerRect = containerRef.current!.getBoundingClientRect();
+              const splitterRect = splitterRef.current!.getBoundingClientRect();
+              const size = calcSecondaryPaneSize(
+                containerRect,
+                splitterRect,
+                {
+                  left: move.clientX,
+                  top: move.clientY
+                },
+                true
+              );
+              setSecondaryPaneSize(size);
+              onSecondaryPaneSizeChangeRef.current?.(size);
+            }
+          });
+        }
       }
-    }
-  }, [calcSecondaryPaneSize]);
+    },
+    [calcSecondaryPaneSize]
+  );
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    processMoveAt(e.clientX, e.clientY);
-  }, [processMoveAt]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      processMoveAt(e.clientX, e.clientY);
+    },
+    [processMoveAt]
+  );
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    processMoveAt(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-  }, [processMoveAt]);
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      processMoveAt(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    },
+    [processMoveAt]
+  );
 
   const removeDragListeners = useCallback(() => {
     const listeners = registeredListenersRef.current;
@@ -209,22 +233,25 @@ function SplitterLayout({
     removeDragListeners();
   }, [removeDragListeners]);
 
-  const handleSplitterMouseDown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    resizingRef.current = true;
-    setResizing(true);
-    onDragStartRef.current?.();
-    registeredListenersRef.current = {
-      mouseUp: handleMouseUp,
-      mouseMove: handleMouseMove,
-      touchEnd: handleMouseUp,
-      touchMove: handleTouchMove
-    };
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('touchend', handleMouseUp);
-    document.addEventListener('touchmove', handleTouchMove);
-  }, [handleMouseUp, handleMouseMove, handleTouchMove]);
+  const handleSplitterMouseDown = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      resizingRef.current = true;
+      setResizing(true);
+      onDragStartRef.current?.();
+      registeredListenersRef.current = {
+        mouseUp: handleMouseUp,
+        mouseMove: handleMouseMove,
+        touchEnd: handleMouseUp,
+        touchMove: handleTouchMove
+      };
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('touchend', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+    },
+    [handleMouseUp, handleMouseMove, handleTouchMove]
+  );
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -240,10 +267,15 @@ function SplitterLayout({
       } else {
         splitterRect = { width: DEFAULT_SPLITTER_SIZE, height: DEFAULT_SPLITTER_SIZE, top: 0, left: 0 };
       }
-      initialSize = calcSecondaryPaneSize(containerRect, splitterRect, {
-        left: containerRect.left + (containerRect.width - splitterRect.width) / 2,
-        top: containerRect.top + (containerRect.height - splitterRect.height) / 2
-      }, false);
+      initialSize = calcSecondaryPaneSize(
+        containerRect,
+        splitterRect,
+        {
+          left: containerRect.left + (containerRect.width - splitterRect.width) / 2,
+          top: containerRect.top + (containerRect.height - splitterRect.height) / 2
+        },
+        false
+      );
     }
     setSecondaryPaneSize(initialSize);
     onSecondaryPaneSizeChangeRef.current?.(initialSize);
